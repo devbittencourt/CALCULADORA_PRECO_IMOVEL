@@ -1,0 +1,57 @@
+Sub A_calculadora_devbittencourt()
+    
+
+    Dim ie As Object
+    Dim html As Object
+    Dim elementosEndereco As Object
+    Dim elementosValor As Object
+    Dim elementosArea As Object
+    Dim endereco As String
+    Dim valor As String
+    Dim area As String
+    Dim i As Integer
+    Dim url As String
+    
+    Range("B9").Value = "BY DEVBITTENCOURT"
+    
+    Set ie = CreateObject("InternetExplorer.Application")
+    url = ThisWorkbook.Sheets("Planilha1").Range("B10").Value
+    
+    ie.Visible = False
+    ie.navigate url
+    
+    Do While ie.readyState <> 4
+        DoEvents
+    Loop
+    Set html = ie.document
+    
+    Set elementosEndereco = html.getElementsByClassName("property-card__address-container")
+    
+    Set elementosValor = html.getElementsByClassName("property-card__price")
+    
+    Set elementosArea = html.getElementsByClassName("property-card__detail-value js-property-card-value property-card__detail-area js-property-card-detail-area")
+    
+    If elementosEndereco.Length > 0 Then
+        For i = 0 To elementosEndereco.Length - 1
+            endereco = elementosEndereco(i).getElementsByClassName("property-card__address")(0).innerText
+            
+            valor = elementosValor(i).innerText
+            
+            area = elementosArea(i).innerText
+            
+            ThisWorkbook.Sheets("Planilha1").Cells(20 + i, 2).Value = endereco
+            
+            ThisWorkbook.Sheets("Planilha1").Cells(20 + i, 3).Value = valor
+            
+            ThisWorkbook.Sheets("Planilha1").Cells(20 + i, 4).Value = area
+        Next i
+    Else
+        MsgBox "Nenhum endereço encontrado."
+    End If
+    
+    ie.Quit
+    Set ie = Nothing
+    Range("H14").Value = "BY DEVBITTENCOURT"
+    
+End Sub
+
